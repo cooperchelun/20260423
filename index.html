@@ -3,679 +3,545 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>🤖 智能聊天機器人 | 先聊起來，再慢慢擴充功能</title>
+    <title>🎬 電影搜尋引擎 | 片名關鍵字查詢</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+            font-family: system-ui, 'Segoe UI', 'Helvetica Neue', 'Noto Sans', sans-serif;
         }
 
         body {
-            background: linear-gradient(145deg, #1a1f2e 0%, #0f1320 100%);
+            background: linear-gradient(145deg, #10141e 0%, #0b0f17 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            padding: 2rem 1.5rem;
         }
 
-        /* 聊天室主容器 */
-        .chat-container {
+        /* 主卡片容器 */
+        .movie-container {
+            max-width: 1400px;
             width: 100%;
-            max-width: 900px;
-            height: 85vh;
-            min-height: 550px;
-            background: rgba(22, 28, 40, 0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(20, 25, 38, 0.65);
+            backdrop-filter: blur(2px);
             border-radius: 2rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
-            display: flex;
-            flex-direction: column;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
             overflow: hidden;
             transition: all 0.2s ease;
         }
 
-        /* 頂部工具列 */
-        .chat-header {
-            padding: 1.2rem 1.8rem;
-            background: rgba(12, 17, 27, 0.7);
+        /* 標題與搜尋區塊 */
+        .hero {
+            padding: 2rem 2rem 1.8rem 2rem;
+            background: rgba(12, 15, 25, 0.7);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFF9E6, #FFDBA5);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: inline-flex;
             align-items: center;
             gap: 12px;
+        }
+
+        h1::before {
+            content: "🎞️";
+            font-size: 2rem;
+            background: none;
+            -webkit-background-clip: unset;
+            color: #FFCF7A;
+        }
+
+        .sub {
+            color: #9aa3b8;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            border-left: 3px solid #ffb347;
+            padding-left: 12px;
+            margin-bottom: 24px;
+        }
+
+        /* 搜尋框 + 按鈕 */
+        .search-area {
+            display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
-        .bot-info {
-            display: flex;
+            gap: 14px;
+            margin: 20px 0 10px 0;
             align-items: center;
-            gap: 12px;
         }
 
-        .bot-avatar {
-            background: linear-gradient(135deg, #3b82f6, #a855f7);
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        .search-input-wrapper {
+            flex: 3;
+            min-width: 200px;
         }
 
-        .bot-name h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 1rem;
+            background: #1e2438;
+            border: 1px solid #2e3a55;
+            border-radius: 60px;
             color: #f0f3fa;
-            letter-spacing: -0.2px;
+            transition: all 0.2s;
+            outline: none;
+            font-weight: 500;
         }
 
-        .bot-name p {
-            font-size: 0.7rem;
-            color: #8d99bd;
-            margin-top: 2px;
+        .search-input:focus {
+            border-color: #ffb347;
+            box-shadow: 0 0 0 3px rgba(255, 180, 71, 0.2);
+            background: #252d44;
         }
 
-        .status-badge {
-            background: #10b98120;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            color: #34d399;
-            border: 1px solid #34d39940;
+        .search-input::placeholder {
+            color: #6c7892;
+            font-weight: normal;
+        }
+
+        .btn-search {
+            background: linear-gradient(105deg, #ffb347, #ff8c2e);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1a1f2c;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(105deg, #ffbc5e, #ff9b3a);
+            box-shadow: 0 8px 18px rgba(255, 140, 46, 0.3);
+        }
+
+        .btn-search:active {
+            transform: translateY(1px);
+        }
+
+        /* 結果狀態列 */
+        .result-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin: 18px 0 8px 0;
+            color: #b9c2db;
+            font-size: 0.85rem;
+        }
+
+        .count-badge {
+            background: #1f253c;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* 電影網格 */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.8rem;
+            padding: 2rem 2rem 2.5rem 2rem;
+        }
+
+        /* 電影卡片 */
+        .movie-card {
+            background: #131a2c;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: all 0.25s ease-in-out;
+            box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(2px);
-        }
-
-        /* 主要訊息區域 */
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem 1.2rem;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            scroll-behavior: smooth;
         }
 
-        /* 自定義卷軸 */
-        .chat-messages::-webkit-scrollbar {
-            width: 5px;
+        .movie-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 180, 71, 0.4);
+            box-shadow: 0 25px 35px -12px black;
         }
 
-        .chat-messages::-webkit-scrollbar-track {
-            background: #1e2538;
-            border-radius: 10px;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: #4b556c;
-            border-radius: 10px;
-        }
-
-        /* 氣泡樣式 */
-        .message {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            max-width: 85%;
-            animation: fadeInUp 0.25s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .user-message {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .bot-message {
-            align-self: flex-start;
-        }
-
-        .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+        /* 海報區塊 - 固定比例且圖片滿版 */
+        .poster-wrapper {
+            position: relative;
+            background: #0b0f18;
+            aspect-ratio: 2 / 3;
+            /* 經典電影海報比例 */
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0;
-            background: #2d354b;
         }
 
-        .user-message .message-avatar {
-            background: #3b82f6;
-            color: white;
+        .movie-poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            display: block;
         }
 
-        .bot-message .message-avatar {
-            background: linear-gradient(145deg, #4f46e5, #7c3aed);
-            color: white;
+        .movie-card:hover .movie-poster {
+            transform: scale(1.03);
         }
 
-        .bubble {
-            background: #1e293b;
-            padding: 0.7rem 1rem;
-            border-radius: 1.2rem;
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            line-height: 1.45;
-            word-break: break-word;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .user-message .bubble {
-            background: linear-gradient(125deg, #2563eb, #1e40af);
-            color: white;
-            border-bottom-right-radius: 0.25rem;
-        }
-
-        .bot-message .bubble {
-            border-bottom-left-radius: 0.25rem;
-            background: #0f172ad9;
-            backdrop-filter: blur(2px);
-        }
-
-        .message-time {
-            font-size: 0.6rem;
-            color: #6b7280;
-            margin-top: 4px;
-            margin-left: 44px;
-        }
-
-        .user-message .message-time {
-            text-align: right;
-            margin-right: 0px;
-            margin-left: auto;
-        }
-
-        /* 輸入區域 */
-        .chat-input-area {
-            padding: 1rem 1.2rem 1.3rem;
-            background: rgba(12, 17, 27, 0.7);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        .no-poster {
             display: flex;
-            gap: 12px;
-            align-items: center;
-            backdrop-filter: blur(8px);
-        }
-
-        .input-wrapper {
-            flex: 1;
-            background: #111827;
-            border-radius: 2rem;
-            border: 1px solid #2d3a5e;
-            display: flex;
-            align-items: center;
-            padding: 4px 4px 4px 18px;
-            transition: all 0.2s;
-        }
-
-        .input-wrapper:focus-within {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            background: #0f172a;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 12px 0;
-            color: #f1f5f9;
-            font-size: 0.9rem;
-            outline: none;
-            resize: none;
-            font-family: inherit;
-        }
-
-        .chat-input::placeholder {
-            color: #5f6c8f;
-            font-weight: 400;
-        }
-
-        .send-btn {
-            background: linear-gradient(105deg, #3b82f6, #2563eb);
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-            color: white;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            background: #101624;
+            color: #6c7a9e;
+            font-size: 0.8rem;
+            text-align: center;
+            height: 100%;
+            gap: 10px;
         }
 
-        .send-btn:hover {
-            transform: scale(1.02);
-            background: linear-gradient(105deg, #4f8eff, #3b6eff);
+        .no-poster span:first-child {
+            font-size: 2.5rem;
+            opacity: 0.6;
         }
 
-        .send-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* 小提示區塊 */
-        .quick-actions {
+        /* 卡片內文 */
+        .card-content {
+            padding: 1rem 1rem 1.2rem 1rem;
+            flex: 1;
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 8px;
-            margin-bottom: 8px;
-            padding: 0 0.2rem;
         }
 
-        .quick-chip {
-            background: #1f2a44;
-            padding: 5px 12px;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            color: #bbd7fb;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid #3b4b6e;
-        }
-
-        .quick-chip:hover {
-            background: #2d3b60;
-            color: white;
-        }
-
-        /* 打字中動畫 */
-        .typing-indicator {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            padding: 6px 14px;
-            background: #0f172ad9;
-            border-radius: 2rem;
-            width: fit-content;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: #94a3b8;
-            border-radius: 50%;
-            animation: typingPulse 1.3s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingPulse {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.4;
-            }
-            30% {
-                transform: translateY(-6px);
-                opacity: 1;
-            }
-        }
-
-        /* 手機適配 */
-        @media (max-width: 550px) {
-            .chat-container {
-                height: 90vh;
-                border-radius: 1.5rem;
-            }
-            .message {
-                max-width: 92%;
-            }
-            .bubble {
-                font-size: 0.85rem;
-            }
-            .chat-header {
-                padding: 0.8rem 1rem;
-            }
-        }
-
-        /* 清空按鈕 (小巧思) */
-        .clear-icon {
-            background: none;
-            border: none;
-            color: #8d99bd;
+        .movie-title {
             font-size: 1.2rem;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: 0.1s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: 700;
+            color: #f5e7d9;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .clear-icon:hover {
-            background: #2a334d;
-            color: #f87171;
+        .movie-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 180, 71, 0.12);
+            padding: 6px 12px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #ffcd8a;
+            font-size: 0.8rem;
+            font-weight: 500;
+            width: fit-content;
+            transition: background 0.2s;
+            margin-top: 6px;
+        }
+
+        .movie-link:hover {
+            background: #ffb347;
+            color: #1a1f2a;
+        }
+
+        .movie-link:hover .link-icon {
+            filter: brightness(0);
+        }
+
+        .link-icon {
+            font-size: 0.85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #9aa5c2;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 2rem;
+            margin: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: #5f6d8c;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 640px) {
+            .movies-grid {
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .hero {
+                padding: 1.2rem;
+            }
+            .btn-search {
+                padding: 10px 20px;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="chat-container">
-    <div class="chat-header">
-        <div class="bot-info">
-            <div class="bot-avatar">🤖</div>
-            <div class="bot-name">
-                <h2>靈悅小助手 · AI 聊天機器人</h2>
-                <p>隨時待命，有問必答｜可擴充功能</p>
+
+<div class="movie-container">
+    <div class="hero">
+        <h1>影迷片庫 · 關鍵字搜尋</h1>
+        <div class="sub">輸入片名關鍵字，立即找出電影、介紹頁連結與海報</div>
+        <div class="search-area">
+            <div class="search-input-wrapper">
+                <input type="text" id="keywordInput" class="search-input" placeholder="例如：星際、 教父、 復仇者、 Titanic..." autocomplete="off">
             </div>
+            <button id="searchBtn" class="btn-search">
+                🔍 搜尋電影
+            </button>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <span class="status-badge">● 在線  ready</span>
-            <button id="clearChatBtn" class="clear-icon" title="清除對話紀錄">🗑️</button>
+        <div class="result-info">
+            <span id="resultMessage">✨ 試試輸入關鍵字「星際」、「愛」、「戰士」、「教父」</span>
+            <span id="resultCount" class="count-badge">共 0 部作品</span>
         </div>
     </div>
 
-    <!-- 對話顯示區塊 -->
-    <div id="chatMessages" class="chat-messages">
-        <!-- 初始歡迎訊息會由js動態加入，確保結構乾淨 -->
+    <!-- 電影卡片網格 -->
+    <div id="moviesGrid" class="movies-grid">
+        <!-- 動態載入電影卡片 -->
     </div>
-
-    <!-- 快捷區 + 輸入區 -->
-    <div class="chat-input-area">
-        <div style="flex:1">
-            <div class="quick-actions">
-                <span class="quick-chip" data-msg="你好！可以介紹一下你自己嗎？">👋 自我介紹</span>
-                <span class="quick-chip" data-msg="推薦一部好看的電影">🎬 推薦電影</span>
-                <span class="quick-chip" data-msg="今天天氣如何？">☀️ 天氣查詢</span>
-                <span class="quick-chip" data-msg="幫我寫一首短詩">📜 生成短詩</span>
-            </div>
-            <div class="input-wrapper">
-                <input type="text" id="messageInput" class="chat-input" placeholder="輸入訊息... 按下 Enter 或點擊發送" autocomplete="off">
-                <button id="sendBtn" class="send-btn">➤</button>
-            </div>
-        </div>
-    </div>
+    <footer>🎬 資料來源模擬電影資料庫 | 點擊超連結可前往電影介紹頁（IMDb示意）</footer>
 </div>
 
 <script>
-    // -------------------------------
-    // 聊天機器人核心 (基礎版)
-    // 功能: 回應對話、保留對話紀錄、打字動畫模擬。
-    // 之後可以自由擴充: 串接API、新增意圖、客製化回應等。
-    // -------------------------------
+    // ---------- 🌟 電影資料庫 (片名, 介紹頁超連結, 海報圖網址)
+    // 為了提供豐富查詢效果，內建多部經典/熱門電影，海報使用合法免費圖庫 Unsplash 相關風格影像，
+    // 並且確保每個電影對應多組關鍵字（中文片名、英文、主題詞）
+    
+    const moviesDatabase = [
+        {
+            title: "星際效應",
+            introUrl: "https://www.imdb.com/title/tt0816692/",
+            poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&h=600&fit=crop",
+            keywords: ["星際", "效應", "Interstellar", "太空", "科幻", "黑洞"]
+        },
+        {
+            title: "教父",
+            introUrl: "https://www.imdb.com/title/tt0068646/",
+            poster: "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=600&fit=crop",
+            keywords: ["教父", "黑幫", "The Godfather", "經典", "柯里昂"]
+        },
+        {
+            title: "刺激1995",
+            introUrl: "https://www.imdb.com/title/tt0111161/",
+            poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop",
+            keywords: ["刺激", "1995", "肖申克", "救贖", "監獄", "希望", "The Shawshank Redemption"]
+        },
+        {
+            title: "鐵達尼號",
+            introUrl: "https://www.imdb.com/title/tt0120338/",
+            poster: "https://images.unsplash.com/photo-1568316674673-a1bfbb3edf1d?w=400&h=600&fit=crop",
+            keywords: ["鐵達尼", "Titanic", "傑克", "蘿絲", "沉船", "愛情"]
+        },
+        {
+            title: "全面啟動",
+            introUrl: "https://www.imdb.com/title/tt1375666/",
+            poster: "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=400&h=600&fit=crop",
+            keywords: ["全面啟動", "盜夢", "Inception", "夢境", "諾蘭", "潛意識"]
+        },
+        {
+            title: "黑暗騎士",
+            introUrl: "https://www.imdb.com/title/tt0468569/",
+            poster: "https://images.unsplash.com/photo-1531259683007-016a7b1fc3ae?w=400&h=600&fit=crop",
+            keywords: ["黑暗騎士", "蝙蝠俠", "小丑", "Batman", "高譚", "諾蘭"]
+        },
+        {
+            title: "阿凡達",
+            introUrl: "https://www.imdb.com/title/tt0499549/",
+            poster: "https://images.unsplash.com/photo-1558449028-b53a89d134fc?w=400&h=600&fit=crop",
+            keywords: ["阿凡達", "Avatar", "潘朵拉", "科幻", "3D", "詹姆斯·卡麥隆"]
+        },
+        {
+            title: "寄生上流",
+            introUrl: "https://www.imdb.com/title/tt6751668/",
+            poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop",
+            keywords: ["寄生", "上流", "寄生上流", "韓國", "奉俊昊", "奧斯卡"]
+        },
+        {
+            title: "樂來越愛你",
+            introUrl: "https://www.imdb.com/title/tt3783958/",
+            poster: "https://images.unsplash.com/photo-1514525253161-7a46d119cd69?w=400&h=600&fit=crop",
+            keywords: ["樂來越愛你", "La La Land", "音樂", "愛情", "夢想", "艾瑪史東"]
+        },
+        {
+            title: "神隱少女",
+            introUrl: "https://www.imdb.com/title/tt0245429/",
+            poster: "https://images.unsplash.com/photo-1618331835717-801e992a6283?w=400&h=600&fit=crop",
+            keywords: ["神隱少女", "千與千尋", "宮崎駿", "動畫", "奇幻", "吉卜力"]
+        },
+        {
+            title: "捍衛戰士:獨行俠",
+            introUrl: "https://www.imdb.com/title/tt1745960/",
+            poster: "https://images.unsplash.com/photo-1542296332-2e4473faf563?w=400&h=600&fit=crop",
+            keywords: ["捍衛戰士", "獨行俠", "Top Gun", "戰鬥機", "湯姆克魯斯", "空戰"]
+        },
+        {
+            title: "復仇者聯盟：終局之戰",
+            introUrl: "https://www.imdb.com/title/tt4154796/",
+            poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400&h=600&fit=crop",
+            keywords: ["復仇者", "終局之戰", "漫威", "Avengers", "英雄", "鋼鐵人"]
+        },
+        {
+            title: "少年PI的奇幻漂流",
+            introUrl: "https://www.imdb.com/title/tt0454876/",
+            poster: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=400&h=600&fit=crop",
+            keywords: ["少年Pi", "奇幻漂流", "李安", "老虎", "海洋", "冒險"]
+        },
+        {
+            title: "鬥陣俱樂部",
+            introUrl: "https://www.imdb.com/title/tt0137523/",
+            poster: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=400&h=600&fit=crop",
+            keywords: ["鬥陣俱樂部", "Fight Club", "布萊德彼特", "大衛芬奇", "人格分裂"]
+        }
+    ];
 
-    // 儲存所有訊息 (物件陣列)
-    let chatHistory = [];
-
-    // 獲取 DOM 元素
-    const messagesContainer = document.getElementById('chatMessages');
-    const messageInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const clearBtn = document.getElementById('clearChatBtn');
-    const quickChips = document.querySelectorAll('.quick-chip');
-
-    // 輔助: 取得當前時間 (顯示時分)
-    function getCurrentTime() {
-        const now = new Date();
-        return `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+    // 比對關鍵字 (不分大小寫)
+    function matchKeyword(movie, searchWord) {
+        if (!searchWord) return true;
+        const lowerSearch = searchWord.toLowerCase().trim();
+        if (lowerSearch === "") return true;
+        // 檢查標題是否包含關鍵字
+        if (movie.title.toLowerCase().includes(lowerSearch)) return true;
+        // 檢查 keywords 陣列中是否有任一包含此關鍵字
+        return movie.keywords.some(kw => kw.toLowerCase().includes(lowerSearch));
     }
 
-    // 渲染所有訊息到 UI 上
-    function renderMessages() {
-        if (!messagesContainer) return;
-        // 清空容器但保留scroll功能
-        messagesContainer.innerHTML = '';
-        chatHistory.forEach(msg => {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${msg.role === 'user' ? 'user-message' : 'bot-message'}`;
-            
-            // 頭像區域
-            const avatarSpan = document.createElement('div');
-            avatarSpan.className = 'message-avatar';
-            avatarSpan.innerText = msg.role === 'user' ? '👤' : '🤖';
-            
-            // 主要內容區 (氣泡+時間)
-            const contentDiv = document.createElement('div');
-            contentDiv.style.maxWidth = 'calc(100% - 44px)';
-            
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.className = 'bubble';
-            // 處理換行 / 支援簡單的markdown風格 (純文字保留空白)
-            bubbleDiv.innerText = msg.text;
-            
-            const timeSpan = document.createElement('div');
-            timeSpan.className = 'message-time';
-            timeSpan.innerText = msg.timestamp || getCurrentTime();
-            
-            contentDiv.appendChild(bubbleDiv);
-            contentDiv.appendChild(timeSpan);
-            
-            messageDiv.appendChild(avatarSpan);
-            messageDiv.appendChild(contentDiv);
-            messagesContainer.appendChild(messageDiv);
+    // 渲染電影卡片 (過濾後)
+    function renderMovies(moviesArray) {
+        const gridContainer = document.getElementById('moviesGrid');
+        const countSpan = document.getElementById('resultCount');
+        const messageSpan = document.getElementById('resultMessage');
+        
+        if (!moviesArray.length) {
+            gridContainer.innerHTML = `<div class="empty-state">
+                <span style="font-size: 3rem;">🎬🔍</span><br/>
+                沒有符合的電影...<br/>
+                試試其他關鍵字，例如：「星際」、「愛情」、「戰士」、「AI」、「李安」<br/>
+                <span style="font-size:0.75rem;">✨ 資料庫內含經典 & 熱門片</span>
+            </div>`;
+            countSpan.innerText = `共 0 部作品`;
+            messageSpan.innerHTML = `😢 沒有找到相關電影，請換個關鍵字～`;
+            return;
+        }
+        
+        // 產生卡片HTML
+        const cardsHtml = moviesArray.map(movie => {
+            // 處理海報如果圖片載入失敗的備用方案 (onerror)
+            const posterOnError = `this.onerror=null; this.src='https://placehold.co/400x600/1e2438/ffb347?text=🎬+Poster+Not+Available';`;
+            return `
+                <div class="movie-card">
+                    <div class="poster-wrapper">
+                        <img class="movie-poster" 
+                             src="${movie.poster}" 
+                             alt="${escapeHtml(movie.title)} 電影海報"
+                             loading="lazy"
+                             onerror="${posterOnError}">
+                    </div>
+                    <div class="card-content">
+                        <div class="movie-title">${escapeHtml(movie.title)}</div>
+                        <a href="${movie.introUrl}" target="_blank" rel="noopener noreferrer" class="movie-link">
+                            <span class="link-icon">🔗</span> 電影介紹頁
+                        </a>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        gridContainer.innerHTML = cardsHtml;
+        const count = moviesArray.length;
+        countSpan.innerText = `共 ${count} 部作品`;
+        messageSpan.innerHTML = `🎉 找到 ${count} 部符合的電影！點擊連結看更多～`;
+    }
+    
+    // 簡易防XSS
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
         });
-        // 自動滾動到底部
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    // 新增一筆訊息到 history 並渲染 (不包含機器人思考狀態)
-    function addMessageToHistory(role, text, time = getCurrentTime()) {
-        chatHistory.push({
-            role: role,
-            text: text,
-            timestamp: time
-        });
-        renderMessages();
-    }
-
-    // 模擬「機器人正在輸入...」的效果 (顯示打字中，再回覆)
-    async function simulateBotResponse(userMessageText) {
-        // 顯示「正在輸入」指示器 (暫時性)
-        const typingId = showTypingIndicator();
-        
-        // 模擬網路或思考延遲 (0.5~1.2秒 更像真人)
-        await delay(600 + Math.random() * 400);
-        
-        // 移除打字指示器
-        removeTypingIndicator(typingId);
-        
-        // 根據使用者訊息產生對應機器人回答
-        const botReply = generateBotReply(userMessageText);
-        addMessageToHistory('bot', botReply);
     }
     
-    // 顯示打字中的氣泡 (回傳唯一識別id)
-    function showTypingIndicator() {
-        const tempId = 'typing_' + Date.now();
-        const typingElement = document.createElement('div');
-        typingElement.id = tempId;
-        typingElement.className = 'message bot-message';
-        typingElement.innerHTML = `
-            <div class="message-avatar">🤖</div>
-            <div class="typing-indicator">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            </div>
-        `;
-        messagesContainer.appendChild(typingElement);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        return tempId;
-    }
-    
-    function removeTypingIndicator(typingId) {
-        const element = document.getElementById(typingId);
-        if (element) element.remove();
-    }
-    
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    
-    // ---------- 🤖 機器人核心對話引擎 (可無限擴充) ----------
-    // 後續依照需求新增更多意圖、串接API、記憶上下文等。
-    function generateBotReply(userMsg) {
-        const msg = userMsg.trim().toLowerCase();
+    // 主要搜尋邏輯 (完全移除聊天機器人，僅電影查詢)
+    function performSearch() {
+        const keywordInput = document.getElementById('keywordInput');
+        let rawKeyword = keywordInput.value;
+        const searchTerm = rawKeyword.trim();
         
-        // 基本問候/自我介紹
-        if (msg.includes('你好') || msg.includes('嗨') || msg.includes('哈囉') || (msg.length < 5 && (msg.includes('hi') || msg.includes('hello')))) {
-            return "嗨！我是你的AI聊天機器人～目前可以陪你聊天、回答簡單問題，並推薦電影或寫詩。你也可以跟我說「推薦電影」、「寫詩」、「笑話」等等～ 有什麼想擴充的功能隨時跟我說！😊";
-        }
-        if (msg.includes('介紹') && (msg.includes('自己') || msg.includes('你是誰'))) {
-            return "我是「靈悅小助手」，一個輕量級聊天機器人，目前能理解基本對話、推薦電影、說笑話、模擬天氣資訊。而且我的核心程式碼乾淨好擴充，接下來你可以幫我增加更多功能如：查天氣API、記住名字、圖像生成等！🎯";
+        let filteredMovies;
+        if (searchTerm === "") {
+            // 如果關鍵字為空，顯示所有電影
+            filteredMovies = [...moviesDatabase];
+            document.getElementById('resultMessage').innerHTML = `🌟 目前顯示所有電影 (共 ${filteredMovies.length} 部) ，輸入關鍵字可篩選～`;
+        } else {
+            filteredMovies = moviesDatabase.filter(movie => matchKeyword(movie, searchTerm));
         }
         
-        // 電影推薦 (因應先前電影查詢主題 但這裡純聊天推薦)
-        if (msg.includes('推薦電影') || (msg.includes('電影') && msg.includes('好看'))) {
-            const movies = [
-                "《星際效應》 – 科幻與親情的極致感動 🌌",
-                "《刺激1995》 – 永遠的經典，希望與自由 🕊️",
-                "《全面啟動》 – 夢境迷宮，燒腦神作 🧠",
-                "《寄生上流》 – 黑色幽默與階級寓言 🎭",
-                "《樂來越愛你》 – 夢想與愛情的爵士詩篇 🎹"
-            ];
-            const randomMovie = movies[Math.floor(Math.random() * movies.length)];
-            return "🎬 推薦你看這部: " + randomMovie + " ～ 喜歡的話可以截圖記錄！(之後可以幫你串接評分網站)";
-        }
+        renderMovies(filteredMovies);
         
-        // 天氣詢問 (模擬，後續可串接API)
-        if (msg.includes('天氣') || msg.includes('氣象') || (msg.includes('今天') && msg.includes('下雨'))) {
-            return "🌤️ 目前我還沒串接即時天氣API，但可以模擬：所在地多雲時晴，氣溫22~26°C，舒適宜人。未來可以幫你串接 OpenWeatherMap 取得真實天氣！你需要這個功能的話可以跟我說～";
-        }
-        
-        // 寫短詩
-        if (msg.includes('詩') || (msg.includes('寫一首') && msg.includes('詩'))) {
-            const poemList = [
-                "《微光》\n夜色輕輕漫開，\n星光點亮期待，\n你的笑容是句對白，\n把我的世界打開。",
-                "《旅程》\n風把煩惱吹遠，\n夢在雲端盤旋，\n每一步都算心願，\n走向更美的明天。",
-                "《藍圖》\n代碼與文字交錯，\n靈感在鍵盤跳動，\n一同建構的宇宙，\n聊出未來的輪廓。"
-            ];
-            return "📜 為你即興創作:\n" + poemList[Math.floor(Math.random() * poemList.length)];
-        }
-        
-        // 笑話/有趣
-        if (msg.includes('笑話') || msg.includes('搞笑')) {
-            const jokes = [
-                "為什麼電腦總是冷冰冰？因為它有一堆風扇，但沒有人風趣～😂",
-                "程式設計師跟上帝有什麼不同？上帝不用DeBug 😇",
-                "咖啡喝太多會怎樣？會 latte 煩惱！☕",
-                "漢堡對薯條說：「我們永遠是 best fries！」🍟"
-            ];
-            return "🎉 " + jokes[Math.floor(Math.random() * jokes.length)];
-        }
-        
-        // 詢問機器人能力範圍
-        if (msg.includes('能做什麼') || msg.includes('功能') || msg.includes('可以幹嘛')) {
-            return "目前我能：💬 一般對話 | 🎬 推薦電影 | 📜 寫短詩 | ☁️ 模擬天氣 | 😂 講笑話 | ✨ 後續還能加：記住你的名字、查詢新聞、串接 API、圖像辨識……等你來擴充！只要告訴我需求，我可以幫你設計整合。";
-        }
-        
-        // 表達感謝
-        if (msg.includes('謝謝') || msg.includes('感謝')) {
-            return "不客氣！能幫上忙是我的榮幸～ 😊 還有任何需要隨時告訴我，我們可以一起讓機器人更強大！";
-        }
-        
-        // 無聊或太短的訊息 暖場
-        if (msg.length < 3 && !msg.includes('hi')) {
-            return "嗯？想聊點什麼呢？可以試試問我「推薦電影」、「寫一首詩」或「講笑話」～ 當然也可以普通聊聊天！";
-        }
-        
-        // 預設幽默回應，包含擴充提示
-        const defaultReplies = [
-            "很有趣的話題！ 🤔 雖然我的資料庫還在學習，但你可以更具體跟我說想新增什麼功能？例如：「記住我的名字」、「播放音樂」、「查股價」等等。",
-            "收到～ 我是可擴充的機器人模組，目前核心對話已穩固。接下來你希望我加入哪些新技能？我會配合調整！",
-            "你說了：「" + userMsg.substring(0, 40) + "」… 這個話題很棒，我可以學習更多。要不要給我指令，讓我串接外部服務？"
-        ];
-        return defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
-    }
-    
-    // ---------- 使用者發送訊息流程 ----------
-    async function sendUserMessage() {
-        let rawText = messageInput.value;
-        if (!rawText.trim()) return;
-        
-        const userText = rawText.trim();
-        // 清空輸入框
-        messageInput.value = '';
-        
-        // 新增使用者訊息至歷史
-        addMessageToHistory('user', userText);
-        
-        // 機器人回應 (模擬延遲+打字)
-        await simulateBotResponse(userText);
-    }
-    
-    // 清除對話 (保留開場白)
-    function clearChatHistory() {
-        chatHistory = [];
-        // 加入預設歡迎訊息
-        const welcomeMsg = "👋 哈囉！我是你的聊天機器人夥伴。你可以問我「推薦電影」、「寫短詩」、「講笑話」或者聊聊任何事～ 未來想要我增加任何功能，隨時告訴我吧！(目前版本支援快速擴充)";
-        chatHistory.push({
-            role: 'bot',
-            text: welcomeMsg,
-            timestamp: getCurrentTime()
-        });
-        // 也可加一個輔助提示
-        renderMessages();
-    }
-    
-    // 處理快捷指令
-    function onQuickChipClick(event) {
-        const chip = event.currentTarget;
-        const presetMsg = chip.getAttribute('data-msg');
-        if (presetMsg) {
-            messageInput.value = presetMsg;
-            sendUserMessage();
+        if (searchTerm !== "" && filteredMovies.length === 0) {
+            document.getElementById('resultMessage').innerHTML = `🔎 沒有找到「${escapeHtml(searchTerm)}」相關的電影，試試其他詞`;
+        } else if (searchTerm !== "") {
+            document.getElementById('resultMessage').innerHTML = `🔍 關鍵字「${escapeHtml(searchTerm)}」 的搜尋結果：`;
         }
     }
     
-    // 綁定事件與初始化
-    function initChat() {
-        // 清除舊有人工增加的歡迎訊息，重置並建立初始對話
-        clearChatHistory();   // 內含歡迎訊息
+    // 綁定事件與初始載入 (預設展示所有電影)
+    function init() {
+        const searchBtn = document.getElementById('searchBtn');
+        const keywordInput = document.getElementById('keywordInput');
         
-        // 事件監聽
-        sendBtn.addEventListener('click', sendUserMessage);
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+        searchBtn.addEventListener('click', performSearch);
+        keywordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
                 e.preventDefault();
-                sendUserMessage();
+                performSearch();
             }
         });
-        clearBtn.addEventListener('click', () => {
-            clearChatHistory();
-            // 可額外顯示輕提示（無需另外通知）
-        });
         
-        quickChips.forEach(chip => {
-            chip.addEventListener('click', onQuickChipClick);
-        });
+        // 首次載入展示所有電影 (讓使用者看到豐富列表)
+        renderMovies(moviesDatabase);
+        document.getElementById('resultCount').innerText = `共 ${moviesDatabase.length} 部作品`;
+        document.getElementById('resultMessage').innerHTML = `🎬 熱門片單已載入！輸入片名關鍵字即可篩選 (支援中英文片名/主題)`;
         
-        // 讓輸入框獲得焦點
-        messageInput.focus();
+        // 輸入框優化提示
+        keywordInput.placeholder = "例如: 星際、 教父、 復仇者、 La La Land、 李安...";
     }
     
-    // 啟動聊天機器人
-    initChat();
+    // 啟動電影查詢頁面
+    init();
 </script>
 </body>
 </html>
